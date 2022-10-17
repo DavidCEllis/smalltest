@@ -2,3 +2,4 @@
 env
 scratch
 *.egg-info/
+.coverage

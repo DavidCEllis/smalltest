@@ -88,7 +88,7 @@ def discover_tests(
     return test_dict
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: nocover
     cwd = Path.cwd()
     print(f"Discovering tests in {cwd}")
     for module, tests in discover_tests(cwd).items():
