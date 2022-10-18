@@ -48,26 +48,17 @@ def discover_test_functions(test_files, *, test_prefix="test_"):
     :param test_prefix: prefix for test functions
     :return: {test_path: [test_function_name, ...]}
     """
-    class TestFinder(ast.NodeVisitor):
-        def __init__(self, prefix=test_prefix):
-            self.prefix = prefix
-            self.test_funcs = []
-
-        def visit_FunctionDef(self, node):
-            if node.name.startswith(test_prefix):
-                self.test_funcs.append(node.name)
-
-        def report(self):
-            return self.test_funcs
 
     test_functions = {}
     for pth in test_files:
         # Parse the source of the text file into an AST
         tree = ast.parse(pth.read_text())
 
-        analyzer = TestFinder()
-        analyzer.visit(tree)
-        test_functions[pth] = analyzer.report()
+        test_functions[pth] = [
+            testfunc.name for testfunc in tree.body
+            if isinstance(testfunc, ast.FunctionDef)
+            and testfunc.name.startswith(test_prefix)
+        ]
 
     return test_functions
 
@@ -90,7 +81,7 @@ def discover_tests(
 
 if __name__ == '__main__':  # pragma: nocover
     cwd = Path.cwd()
-    print(f"Discovering tests in {cwd}")
+    print(f"Discovering tests_unittest in {cwd}")
     for module, tests in discover_tests(cwd).items():
         print(f"Tests in {module.relative_to(cwd)}")
         for test in tests:
