@@ -81,7 +81,7 @@ def discover_tests(
 
 if __name__ == '__main__':  # pragma: nocover
     cwd = Path.cwd()
-    print(f"Discovering tests_unittest in {cwd}")
+    print(f"Discovering tests in {cwd}")
     for module, tests in discover_tests(cwd).items():
         print(f"Tests in {module.relative_to(cwd)}")
         for test in tests:
