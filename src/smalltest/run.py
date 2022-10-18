@@ -44,13 +44,15 @@ def run_test(test):
 def run_tests_serial(test_dict):
     results = {}
     for module_path, test_names in test_dict.items():
+
+        # Load the test module
         module_name = module_path.stem
         spec = importlib.util.spec_from_file_location(module_name, module_path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
 
+        # Collect the results
         results[module_name] = []
-
         for test_name in test_names:
             result = run_test(getattr(module, test_name))
             if result.success:
