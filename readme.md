@@ -1,4 +1,4 @@
-# Minitest - Minimal python unittest convenience #
+# Smalltest - Minimal python unittest convenience #
 
 An attempt to make a minimal python unittest runner designed to allow for simple pytest
 style test writing without requiring any dependencies outside of the stdlib.
