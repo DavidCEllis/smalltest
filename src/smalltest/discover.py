@@ -14,21 +14,22 @@ TEST_FILE_NAMES = ["test_*.py", "*_test.py"]
 
 # noinspection PyDefaultArgument
 def discover_test_modules(
-        base_path=None,
+        base_path=Path.cwd(),
         *,
         test_file_names=TEST_FILE_NAMES,
         test_folder_names=TEST_FOLDER_NAMES
 ):
     """
-    Find and return a list of python test files matching the TEST_FILE_NAMES
-    wildcards
-    :param base_path: Path to start the search for test folders
-    :param test_file_names:
-    :param test_folder_names:
-    :return: (absolute test_file paths)
+    Search base_path for files matching test_file_names patterns.
+    Search recursively through any subfolders matching test_folder_names for
+    any files matching test_file_names patterns.
+    Return a list of matching files.
+
+    :param base_path: Path to start the search for test modules and folders
+    :param test_file_names: glob wildcard filename patterns for test modules
+    :param test_folder_names: exact foldernames in base_path to recursively search
+    :return: [Path(test_module), ...]
     """
-    # Default to CWD/relative_to to base_path if not given
-    base_path = Path.cwd() if base_path is None else Path(base_path)
 
     test_files = []
     for file_name in test_file_names:
@@ -65,12 +66,23 @@ def discover_test_functions(test_files, *, test_prefix="test_"):
 
 # noinspection PyDefaultArgument
 def discover_tests(
-        base_path=None,
+        base_path=Path.cwd(),
         *,
         test_file_names=TEST_FILE_NAMES,
         test_folder_names=TEST_FOLDER_NAMES,
         test_prefix="test_",
 ):
+    """
+    Search base_path for test files as discover_test_modules.
+    Then search each module for test functions as discover_test_functions.
+    Return a dictionary of { path: [test_name, ...] }
+
+    :param base_path: Search path root
+    :param test_file_names: glob wildcard filename patterns for test modules
+    :param test_folder_names: exact foldernames in base_path to recursively search
+    :param test_prefix: prefix for test functions
+    :return: {test_path: [test_function_name, ...]}
+    """
     test_files = discover_test_modules(base_path,
                                        test_file_names=test_file_names,
                                        test_folder_names=test_folder_names
