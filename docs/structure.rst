@@ -3,29 +3,11 @@ Smalltest project structure
 
 Smalltest consists of a few modules that perform distinct parts of the test setup.
 
-discover.py
------------
-This module is made up of 3 functions that help to discover test files and functions from
-the working directory.
+**discover.py** contains the functions that search through the file system for test modules
+and search the test modules for test functions to run.
 
+**run.py** Handles running the tests that have been discovered by discover.py.
+It provides a dictionary of test_module:test_name mapped to the result from running the test
 
-.. py:function:: discover_test_modules(base_path=Path.cwd(), *, test_file_names=["test_*.py", "*_test.py"], test_folder_names=["tests"])
+**reporter.py** Handles the interpretation of the results from running a test suite.
 
-    | Search base_path for files matching test_file_names patterns.
-    | Search recursively through any subfolders matching test_folder_names for
-    | any files matching test_file_names patterns.
-    | Return a list of matching files.
-
-
-.. py:function:: discover_test_functions(test_files, *, test_prefix="test_")
-
-    | Search the AST of each file in test_files for functions at module level
-    | that have the matching test prefix.
-    | Return a matching dict of { path: [test_function, ...], ... }
-
-
-.. py:function:: discover_tests(base_path=Path.cwd(), *, test_file_names=["test_*.py", "*_test.py"], test_folder_names=["tests"], test_prefix=="test_")
-
-    | Search base_path for test modules using discover_test_modules
-    | For each module returned search for matching test functions
-    | Return a dictionary of { path: [test_function,...], ... }

@@ -14,7 +14,7 @@ TEST_FILE_NAMES = ["test_*.py", "*_test.py"]
 
 # noinspection PyDefaultArgument
 def discover_test_modules(
-        base_path=Path.cwd(),
+        base_path=None,
         *,
         test_file_names=TEST_FILE_NAMES,
         test_folder_names=TEST_FOLDER_NAMES
@@ -30,6 +30,7 @@ def discover_test_modules(
     :param test_folder_names: exact foldernames in base_path to recursively search
     :return: [Path(test_module), ...]
     """
+    base_path = Path(base_path) if base_path else Path.cwd()
 
     test_files = []
     for file_name in test_file_names:
@@ -66,7 +67,7 @@ def discover_test_functions(test_files, *, test_prefix="test_"):
 
 # noinspection PyDefaultArgument
 def discover_tests(
-        base_path=Path.cwd(),
+        base_path=None,
         *,
         test_file_names=TEST_FILE_NAMES,
         test_folder_names=TEST_FOLDER_NAMES,

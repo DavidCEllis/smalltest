@@ -52,17 +52,13 @@ def run_tests_serial(test_dict):
         spec.loader.exec_module(module)
 
         # Collect the results
-        results[module_name] = []
         for test_name in test_names:
             result = run_test(getattr(module, test_name))
             if result.success:
-                print(f"{test_name} - Success")
+                print(f"{module_name}:{test_name} - Success")
             else:
-                print(f"{test_name} - Failure")
+                print(f"{module_name}:{test_name} - Failure")
+            results[f"{module_name}:{test_name}"] = result
 
-        results[module_name] = [
-            run_test(getattr(module, test_name))
-            for test_name in test_names
-        ]
     return results
 
