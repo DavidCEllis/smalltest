@@ -52,6 +52,12 @@ def run_test(test):
 
 # noinspection PyUnresolvedReferences
 def run_tests_serial(test_dict):
+    """
+    Run the tests one at a time serially.
+
+    :param test_dict: { module: [test_name, ...] }
+    :return: result dict
+    """
     results = {}
     for module_path, test_names in test_dict.items():
 
@@ -70,6 +76,12 @@ def run_tests_serial(test_dict):
                     print(f"{module_name}:{test_name} - Success")
                 case ResultType.FAILURE:
                     print(f"{module_name}:{test_name} - Failure")
+                case ResultType.XFAIL:
+                    print(f"{module_name}:{test_name} - XFailed")
+                case ResultType.XPASS:
+                    print(f"{module_name}:{test_name} - XPassed")
+                case ResultType.SKIP:
+                    print(f"{module_name}:{test_name} - Skipped")
 
             results[f"{module_name}:{test_name}"] = result
 
