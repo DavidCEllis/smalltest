@@ -1,6 +1,7 @@
 """
 Run the tests_unittest
 """
+import enum
 import importlib.util
 import warnings
 
@@ -10,8 +11,16 @@ from io import StringIO
 
 TestResult = namedtuple(
     "TestResult",
-    ["success", "exception_args", "stdout", "stderr", "warnings"]
+    ["result_type", "exception_args", "stdout", "stderr", "warnings"]
 )
+
+
+class ResultType(enum.Enum):
+    SUCCESS = 0
+    FAILURE = 1
+    XFAIL = 2
+    XPASS = 3
+    SKIP = 4
 
 
 def run_test(test):
@@ -31,16 +40,17 @@ def run_test(test):
             test()
     except AssertionError as e:
         result = TestResult(
-            False, e.args, stdout.getvalue(), stderr.getvalue(), warns
+            ResultType.FAILURE, e.args, stdout.getvalue(), stderr.getvalue(), warns
         )
     else:
         result = TestResult(
-            True, None, stdout.getvalue(), stderr.getvalue(), warns
+            ResultType.SUCCESS, None, stdout.getvalue(), stderr.getvalue(), warns
         )
 
     return result
 
 
+# noinspection PyUnresolvedReferences
 def run_tests_serial(test_dict):
     results = {}
     for module_path, test_names in test_dict.items():
@@ -54,10 +64,13 @@ def run_tests_serial(test_dict):
         # Collect the results
         for test_name in test_names:
             result = run_test(getattr(module, test_name))
-            if result.success:
-                print(f"{module_name}:{test_name} - Success")
-            else:
-                print(f"{module_name}:{test_name} - Failure")
+
+            match result.result_type:
+                case ResultType.SUCCESS:
+                    print(f"{module_name}:{test_name} - Success")
+                case ResultType.FAILURE:
+                    print(f"{module_name}:{test_name} - Failure")
+
             results[f"{module_name}:{test_name}"] = result
 
     return results
