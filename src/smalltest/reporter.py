@@ -14,7 +14,7 @@ def text_reporter(test_results, stream=None, strict_xfail=False):
     :param strict_xfail: Report XPASS as failure
     """
     test_counts = Counter()
-    stream = stream if stream else sys.stderr
+    stream = stream if stream else sys.stdout
     stream = WritelnDecorator(stream)
 
     for test_name, test_result in test_results.items():

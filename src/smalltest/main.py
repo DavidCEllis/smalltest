@@ -15,7 +15,7 @@ def discover_and_run():
         base_path = None
     tests = discover_tests(base_path)
     test_results = run_tests_serial(tests, stream=sys.stderr)
-    text_reporter(test_results, stream=sys.stderr)
+    text_reporter(test_results, stream=sys.stdout)
 
 
 if __name__ == "__main__":
