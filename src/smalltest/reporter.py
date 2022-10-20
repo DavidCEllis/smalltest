@@ -1,11 +1,17 @@
 import sys
 from collections import Counter
 
-from .runner import ResultType
+from typing import Dict, TextIO
+
+from .runner import ResultType, TestResult
 from .util import WritelnDecorator
 
 
-def text_reporter(test_results, stream=None, strict_xfail=False):
+def text_reporter(
+        test_results: Dict[str, TestResult],
+        stream: TextIO = None,
+        strict_xfail: bool = False
+) -> Dict[ResultType, int]:
     """
     Basic reporter that writes a text report of failed tests
     and captured stdout/stderr/warnings
@@ -14,11 +20,17 @@ def text_reporter(test_results, stream=None, strict_xfail=False):
     :param strict_xfail: Report XPASS as failure
     """
     test_counts = Counter()
+
     stream = stream if stream else sys.stdout
     stream = WritelnDecorator(stream)
 
     for test_name, test_result in test_results.items():
-        test_counts[test_result.result_type] += 1
+        # XPASS on strict_xfail is counted as failure
+        if strict_xfail and test_result.result_type == ResultType.XPASS:
+            test_counts[ResultType.FAILURE] += 1
+        else:
+            test_counts[test_result.result_type] += 1
+
         match test_result.result_type:
             case ResultType.FAILURE:
                 stream.writeln(f"{test_name} Failed")
@@ -77,3 +89,5 @@ def text_reporter(test_results, stream=None, strict_xfail=False):
             f"    {test_counts[ResultType.ERROR]:{digits}d} "
             f"Failed to run due to errors"
         )
+
+    return test_counts

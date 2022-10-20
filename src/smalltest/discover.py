@@ -46,7 +46,7 @@ def discover_test_modules(
 def discover_test_functions(
         test_files: List[Path],
         *,
-        test_prefix="test_"
+        test_prefix: str = "test_"
 ) -> Dict[Path, List[str]]:
     """
     Use the abstract syntax tree of the source in the test files to find the
@@ -77,7 +77,7 @@ def discover_tests(
         *,
         test_file_names: List[str] = TEST_FILE_NAMES,
         test_folder_names: List[str] = TEST_FOLDER_NAMES,
-        test_prefix="test_",
+        test_prefix: str = "test_",
 ) -> Dict[Path, List[str]]:
     """
     Search base_path for test files as discover_test_modules.

@@ -9,25 +9,27 @@ import warnings
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, TextIO
+from typing import Any, Callable, Dict, List, Optional, TextIO, Tuple
+from typing import NamedTuple
+from types import TracebackType
+
 
 from .markers import XFailMarker, XPassMarker, SkipMarker
-from .vendor.prefab import Prefab, Attribute
 from .util import WritelnDecorator
 
 
-class TestResult(Prefab):
-    result_type = Attribute()
-    exception = Attribute()
-    stdout = Attribute()
-    stderr = Attribute()
-    warnings = Attribute()
+class TestResult(NamedTuple):
+    result_type: "ResultType"
+    exception: Optional["ErrorDetails"]
+    stdout: str
+    stderr: str
+    warnings: List[warnings.WarningMessage]
 
 
-class ErrorDetails(Prefab):
-    args = Attribute()
-    name = Attribute(default=None)
-    traceback = Attribute(default=None)
+class ErrorDetails(NamedTuple):
+    args: Tuple[Any]
+    name: Optional[str] = None
+    traceback: Optional[TracebackType] = None
 
 
 class ResultType(enum.Enum):
