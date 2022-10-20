@@ -112,7 +112,6 @@ def run_test(test: Callable) -> TestResult:
     return result
 
 
-# noinspection PyUnresolvedReferences
 def run_tests_serial(
         test_dict: dict[Path, list[str]],
         stream: Optional[TextIO] = None
