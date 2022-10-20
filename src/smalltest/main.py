@@ -49,7 +49,7 @@ def discover_run_report(
         strict_xfail: bool = False,
         stream: TextIO = sys.stdout
 ) -> ExitCode:
-
+    # Include the current directory as first in sys.path
     sys.path.insert(0, str(Path.cwd()))
 
     # Discover Tests
