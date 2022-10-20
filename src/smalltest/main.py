@@ -29,13 +29,16 @@ class ExitCode(Enum):
 
 
 @contextmanager
-def coverage_if_available():
+def coverage_if_available(omit: list[str]):
     try:
         import coverage
     except ImportError:
         yield None
     else:
-        cov = coverage.Coverage(omit="*/smalltest/*")
+        # Don't measure smalltest code unless testing smalltest
+        if 'smalltest' not in omit[0]:
+            omit.append("*/smalltest/*")
+        cov = coverage.Coverage(omit=omit)
         cov.start()
         cov_output = StringIO()
         yield cov_output
@@ -59,8 +62,11 @@ def discover_run_report(
         traceback.print_exception(e)
         return ExitCode.ERROR_DISCOVERY
 
+    # Don't give coverage of the tests themselves
+    omit = list(str(module) for module in tests.keys())
+
     # Setup Coverage Before Import
-    with coverage_if_available() as cov_output:
+    with coverage_if_available(omit) as cov_output:
         try:
             test_results = run_tests_serial(tests, stream=stream)
         except Exception as e:
