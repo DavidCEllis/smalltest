@@ -22,20 +22,20 @@ def text_reporter(test_results, stream=None, strict_xfail=False):
         match test_result.result_type:
             case ResultType.FAILURE:
                 stream.writeln(f"{test_name} Failed")
-                for arg in test_result.exception_args:
+                for arg in test_result.exception.args:
                     stream.writeln(f"\t{arg}")
                 stream.writeln("")
             case ResultType.XPASS:
                 if strict_xfail:
                     stream.writeln(f"{test_name} Unexpectedly Passed")
-                    for arg in test_result.exception_args:
+                    for arg in test_result.exception.args:
                         stream.writeln(f"\t{arg}")
                     stream.writeln("")
             case ResultType.ERROR:
                 stream.writeln(f"{test_name} threw an unexpected exception")
-                stream.writeln(f"\tError     {test_result.exception_args[0]}")
-                stream.writeln(f"\tTraceback {test_result.exception_args[1]}")
-                for arg in test_result.exception_args[2:]:
+                stream.writeln(f"\tError     {test_result.exception.name}")
+                stream.writeln(f"\tTraceback {test_result.exception.traceback}")
+                for arg in test_result.exception.args:
                     stream.writeln(f"\t{arg}")
                 stream.writeln("")
 

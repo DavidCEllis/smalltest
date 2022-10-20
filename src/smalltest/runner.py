@@ -18,10 +18,16 @@ from .util import WritelnDecorator
 
 class TestResult(Prefab):
     result_type = Attribute()
-    exception_args = Attribute()
+    exception = Attribute()
     stdout = Attribute()
     stderr = Attribute()
     warnings = Attribute()
+
+
+class ErrorDetails(Prefab):
+    args = Attribute()
+    name = Attribute(default=None)
+    traceback = Attribute(default=None)
 
 
 class ResultType(enum.Enum):
@@ -51,7 +57,7 @@ def run_test(test: Callable) -> TestResult:
     except AssertionError as e:
         result = TestResult(
             ResultType.FAILURE,
-            e.args,
+            ErrorDetails(e.args, traceback=e.__traceback__),
             stdout.getvalue(),
             stderr.getvalue(),
             warns
@@ -59,7 +65,7 @@ def run_test(test: Callable) -> TestResult:
     except XFailMarker as e:
         result = TestResult(
             ResultType.XFAIL,
-            e.args,
+            ErrorDetails(e.args),
             stdout.getvalue(),
             stderr.getvalue(),
             warns
@@ -67,7 +73,7 @@ def run_test(test: Callable) -> TestResult:
     except XPassMarker as e:
         result = TestResult(
             ResultType.XPASS,
-            e.args,
+            ErrorDetails(e.args),
             stdout.getvalue(),
             stderr.getvalue(),
             warns
@@ -75,7 +81,7 @@ def run_test(test: Callable) -> TestResult:
     except SkipMarker as e:
         result = TestResult(
             ResultType.SKIP,
-            e.args,
+            ErrorDetails(e.args),
             stdout.getvalue(),
             stderr.getvalue(),
             warns
@@ -84,7 +90,11 @@ def run_test(test: Callable) -> TestResult:
         # In the case of an unexpected error, also provide more error info
         result = TestResult(
             ResultType.ERROR,
-            (e.__class__.__qualname__, e.__traceback__, *e.args),
+            ErrorDetails(
+                e.args,
+                name=e.__class__.__qualname__,
+                traceback=e.__traceback__
+            ),
             stdout.getvalue(),
             stderr.getvalue(),
             warns
@@ -156,7 +166,7 @@ def run_tests_serial(
                     stream.writeln(f"{full_test_name} - XPassed")
                 case ResultType.SKIP:
                     stream.writeln(f"{full_test_name} - Skipped / "
-                                   f"{result.exception_args[0]}")
+                                   f"{result.exception.args[0]}")
                 case ResultType.ERROR:
                     stream.writeln(f"{full_test_name} - ERROR")
 
