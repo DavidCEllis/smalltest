@@ -57,3 +57,7 @@ Smalltest: running 5 tests from 2 modules
 TestResult(result_type=<ResultType.XFAIL: 2>, exception_args=('Test is always false.', 'Does 1 == 2'), stdout='Captured STDOUT', stderr='Captured STDERR', warnings=[])
 ```
 
+## reporter.py ##
+**reporter.py** takes the output from a test run and gives a more detailed 
+report on the results.
+
