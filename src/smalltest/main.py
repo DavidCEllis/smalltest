@@ -10,9 +10,12 @@ from io import StringIO
 from pathlib import Path
 from typing import TextIO, Optional, Union
 
-from smalltest.discover import discover_tests
-from smalltest.runner import run_tests_serial, ResultType
-from smalltest.reporter import text_reporter
+from smalltest.suite import (
+    discover_tests,
+    run_tests_serial,
+    text_reporter,
+    ResultType
+)
 
 
 class ExitCode(Enum):

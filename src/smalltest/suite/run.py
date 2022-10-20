@@ -14,7 +14,7 @@ from typing import NamedTuple
 from types import TracebackType
 
 from smalltest.tools import XFailMarker, XPassMarker, SkipMarker
-from .util import WritelnDecorator
+from smalltest.util import WritelnDecorator
 
 
 class TestResult(NamedTuple):

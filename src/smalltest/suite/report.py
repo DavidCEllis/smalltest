@@ -3,8 +3,8 @@ from collections import Counter
 
 from typing import TextIO
 
-from .runner import ResultType, TestResult
-from .util import WritelnDecorator
+from .run import ResultType, TestResult
+from smalltest.util import WritelnDecorator
 
 
 def text_reporter(

@@ -1,7 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from smalltest.discover import discover_tests, discover_test_functions, discover_test_modules
+from smalltest.suite.discover import discover_tests, discover_test_functions, discover_test_modules
 
 faketests = """
 
