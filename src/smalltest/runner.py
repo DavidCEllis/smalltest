@@ -9,12 +9,12 @@ import warnings
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, TextIO, Tuple
+from typing import Any, Callable, Optional, TextIO
 from typing import NamedTuple
 from types import TracebackType
 
 
-from .markers import XFailMarker, XPassMarker, SkipMarker
+from smalltest.tools._markers import XFailMarker, XPassMarker, SkipMarker
 from .util import WritelnDecorator
 
 
@@ -23,11 +23,11 @@ class TestResult(NamedTuple):
     exception: Optional["ErrorDetails"]
     stdout: str
     stderr: str
-    warnings: List[warnings.WarningMessage]
+    warnings: list[warnings.WarningMessage]
 
 
 class ErrorDetails(NamedTuple):
-    args: Tuple[Any]
+    args: tuple[Any, ...]
     name: Optional[str] = None
     traceback: Optional[TracebackType] = None
 
@@ -115,9 +115,9 @@ def run_test(test: Callable) -> TestResult:
 
 # noinspection PyUnresolvedReferences
 def run_tests_serial(
-        test_dict: Dict[Path, List[str]],
+        test_dict: dict[Path, list[str]],
         stream: Optional[TextIO] = None
-) -> Dict[str, TestResult]:
+) -> dict[str, TestResult]:
     """
     Run the tests one at a time serially.
 
@@ -126,7 +126,7 @@ def run_tests_serial(
     :return: result dict
     """
     results = {}
-    stream = stream if stream else sys.stderr
+    stream = stream if stream else sys.stdout
     stream = WritelnDecorator(stream)
 
     test_total = sum(len(tests) for tests in test_dict.values())

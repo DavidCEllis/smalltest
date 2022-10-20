@@ -7,7 +7,7 @@ start with the test prefix.
 """
 import ast
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Optional, Union
 
 # When python 3.11 is released make this customizable from pyproject.toml
 TEST_FOLDER_NAMES = ["tests"]
@@ -16,11 +16,11 @@ TEST_FILE_NAMES = ["test_*.py", "*_test.py"]
 
 # noinspection PyDefaultArgument
 def discover_test_modules(
-        base_path: Optional[Path] = None,
+        base_path: Optional[Union[str, Path]] = None,
         *,
-        test_file_names: List[str] = TEST_FILE_NAMES,
-        test_folder_names: List[str] = TEST_FOLDER_NAMES
-) -> List[Path]:
+        test_file_names: list[str] = TEST_FILE_NAMES,
+        test_folder_names: list[str] = TEST_FOLDER_NAMES
+) -> list[Path]:
     """
     Search base_path for files matching test_file_names patterns.
     Search recursively through any subfolders matching test_folder_names for
@@ -44,10 +44,10 @@ def discover_test_modules(
 
 
 def discover_test_functions(
-        test_files: List[Path],
+        test_files: list[Path],
         *,
         test_prefix: str = "test_"
-) -> Dict[Path, List[str]]:
+) -> dict[Path, list[str]]:
     """
     Use the abstract syntax tree of the source in the test files to find the
     name of all the functions that match the test prefix.
@@ -57,7 +57,7 @@ def discover_test_functions(
     :return: {test_path: [test_function_name, ...]}
     """
 
-    test_functions: Dict[Path, List[str]] = {}
+    test_functions: dict[Path, list[str]] = {}
     for pth in test_files:
         # Parse the source of the text file into an AST
         tree = ast.parse(pth.read_text())
@@ -73,12 +73,12 @@ def discover_test_functions(
 
 # noinspection PyDefaultArgument
 def discover_tests(
-        base_path: Optional[Path] = None,
+        base_path: Optional[Union[str, Path]] = None,
         *,
-        test_file_names: List[str] = TEST_FILE_NAMES,
-        test_folder_names: List[str] = TEST_FOLDER_NAMES,
+        test_file_names: list[str] = TEST_FILE_NAMES,
+        test_folder_names: list[str] = TEST_FOLDER_NAMES,
         test_prefix: str = "test_",
-) -> Dict[Path, List[str]]:
+) -> dict[Path, list[str]]:
     """
     Search base_path for test files as discover_test_modules.
     Then search each module for test functions as discover_test_functions.

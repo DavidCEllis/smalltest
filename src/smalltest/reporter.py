@@ -1,17 +1,17 @@
 import sys
 from collections import Counter
 
-from typing import Dict, TextIO
+from typing import TextIO
 
 from .runner import ResultType, TestResult
 from .util import WritelnDecorator
 
 
 def text_reporter(
-        test_results: Dict[str, TestResult],
+        test_results: dict[str, TestResult],
         stream: TextIO = None,
         strict_xfail: bool = False
-) -> Dict[ResultType, int]:
+) -> dict[ResultType, int]:
     """
     Basic reporter that writes a text report of failed tests
     and captured stdout/stderr/warnings
