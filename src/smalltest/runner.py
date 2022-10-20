@@ -13,8 +13,7 @@ from typing import Any, Callable, Optional, TextIO
 from typing import NamedTuple
 from types import TracebackType
 
-
-from smalltest.tools._markers import XFailMarker, XPassMarker, SkipMarker
+from smalltest.tools import XFailMarker, XPassMarker, SkipMarker
 from .util import WritelnDecorator
 
 
