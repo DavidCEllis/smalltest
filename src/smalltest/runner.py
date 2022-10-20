@@ -8,6 +8,8 @@ import warnings
 
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
+from pathlib import Path
+from typing import Callable, Dict, List, Optional, TextIO
 
 from .markers import XFailMarker, XPassMarker, SkipMarker
 from .vendor.prefab import Prefab, Attribute
@@ -31,12 +33,12 @@ class ResultType(enum.Enum):
     SKIP = 4
 
 
-def run_test(test):
+def run_test(test: Callable) -> TestResult:
     """
     Run the test function, capture stdout, stderr and uncaught warnings
     to display in the report.
 
-    :param test function - callable
+    :param test function
     :return: TestResult
     """
     stdout = StringIO()
@@ -82,7 +84,7 @@ def run_test(test):
         # In the case of an unexpected error, also provide more error info
         result = TestResult(
             ResultType.ERROR,
-            [e.__class__.__qualname__, e.__traceback__, *e.args],
+            (e.__class__.__qualname__, e.__traceback__, *e.args),
             stdout.getvalue(),
             stderr.getvalue(),
             warns
@@ -100,7 +102,10 @@ def run_test(test):
 
 
 # noinspection PyUnresolvedReferences
-def run_tests_serial(test_dict, stream=None):
+def run_tests_serial(
+        test_dict: Dict[Path, List[str]],
+        stream: Optional[TextIO] = None
+) -> Dict[str, TestResult]:
     """
     Run the tests one at a time serially.
 
@@ -160,4 +165,3 @@ def run_tests_serial(test_dict, stream=None):
     stream.writeln(delimiters)
     stream.flush()
     return results
-

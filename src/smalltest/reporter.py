@@ -1,7 +1,7 @@
 import sys
 from collections import Counter
 
-from .run import ResultType
+from .runner import ResultType
 from .util import WritelnDecorator
 
 

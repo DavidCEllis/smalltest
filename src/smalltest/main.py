@@ -4,7 +4,7 @@ Perform the various combinations of discovering and running tests
 import sys
 
 from smalltest.discover import discover_tests
-from smalltest.run import run_tests_serial
+from smalltest.runner import run_tests_serial
 from smalltest.reporter import text_reporter
 
 
