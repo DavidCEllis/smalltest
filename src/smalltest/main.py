@@ -35,7 +35,7 @@ def coverage_if_available():
     except ImportError:
         yield None
     else:
-        cov = coverage.Coverage()
+        cov = coverage.Coverage(omit="*/smalltest/*")
         cov.start()
         cov_output = StringIO()
         yield cov_output
@@ -49,6 +49,8 @@ def discover_run_report(
         strict_xfail: bool = False,
         stream: TextIO = sys.stdout
 ) -> ExitCode:
+
+    sys.path.insert(0, str(Path.cwd()))
 
     # Discover Tests
     try:
@@ -90,6 +92,10 @@ def discover_run_report(
     return ExitCode.SUCCESS
 
 
-if __name__ == "__main__":
+def main():
     result = discover_run_report()
     sys.exit(result.value)
+
+
+if __name__ == "__main__":
+    main()
