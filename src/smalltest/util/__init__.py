@@ -1,0 +1,1 @@
+from .writelndecorator import WritelnDecorator

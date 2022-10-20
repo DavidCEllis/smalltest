@@ -14,9 +14,8 @@ def discover_and_run():
     except IndexError:
         base_path = None
     tests = discover_tests(base_path)
-    test_results = run_tests_serial(tests)
-    print("-"*50)
-    text_reporter(test_results)
+    test_results = run_tests_serial(tests, stream=sys.stderr)
+    text_reporter(test_results, stream=sys.stderr)
 
 
 if __name__ == "__main__":
