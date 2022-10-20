@@ -2,6 +2,8 @@
 
 Simple unittests, no additional required dependencies.
 
+Smalltest until/unless I come up with a better name.
+
 This is still in the very early exploration stages.
 
 Written mostly as a learning project, but also after finding out that another
