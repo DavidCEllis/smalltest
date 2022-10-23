@@ -19,13 +19,14 @@ from smalltest.suite import (
 
 
 class ExitCode(Enum):
-    """Numeric exit codes - matching pytest codes"""
+    """Numeric exit codes"""
     SUCCESS = 0
     FAILED_TESTS = 1
     ERROR_TESTS = 2
     ERROR_DISCOVERY = 3
     ERROR_RUN = 4
     ERROR_REPORT = 5
+    NO_TESTS_FOUND = 6
 
 
 @contextmanager
@@ -59,6 +60,9 @@ def discover_run_report(
     except Exception as e:
         traceback.print_exception(e)
         return ExitCode.ERROR_DISCOVERY
+
+    if not tests:
+        return ExitCode.NO_TESTS_FOUND
 
     # Don't give coverage of the tests themselves
     omit = list(str(module) for module in tests.keys())
