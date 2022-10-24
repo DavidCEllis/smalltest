@@ -62,6 +62,8 @@ def discover_test_functions(
         # Parse the source of the text file into an AST
         tree = ast.parse(pth.read_text())
 
+        # Only care about module level functions that start with test_prefix
+        # Anything more complicated is currently beyond the scope of smalltest
         test_functions[pth] = [
             testfunc.name for testfunc in tree.body
             if isinstance(testfunc, ast.FunctionDef)
