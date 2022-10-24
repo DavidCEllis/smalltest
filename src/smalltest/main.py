@@ -31,6 +31,7 @@ class ExitCode(Enum):
 
 @contextmanager
 def coverage_if_available(omit: list[str]):
+    """Wrap the tests in coverage if the module is installed"""
     try:
         import coverage
     except ImportError:
@@ -53,7 +54,13 @@ def discover_run_report(
         strict_xfail: bool = False,
         stream: TextIO = sys.stdout
 ) -> ExitCode:
-
+    """
+    Discover tests, run the tests, print a report to stream output
+    :param base_path:
+    :param strict_xfail: fail if tests xpass
+    :param stream: file-like text stream
+    :return Exitcode:
+    """
     # Discover Tests
     try:
         tests = discover_tests(base_path)
