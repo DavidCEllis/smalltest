@@ -1,4 +1,5 @@
 import sys
+import traceback
 from collections import Counter
 
 from typing import TextIO
@@ -46,9 +47,13 @@ def text_reporter(
             case ResultType.ERROR:
                 stream.writeln(f"{test_name} threw an unexpected exception")
                 stream.writeln(f"\tError     {test_result.exception.name}")
-                stream.writeln(f"\tTraceback {test_result.exception.traceback}")
+                stream.writeln(f"\tMessage")
                 for arg in test_result.exception.args:
-                    stream.writeln(f"\t{arg}")
+                    stream.writeln(f"\t\t{arg}")
+                stream.writeln(f"\tTraceback")
+                formatted_tb = traceback.format_tb(test_result.exception.traceback)
+                for line in formatted_tb[1:]:  # Skip the line from running the test itself
+                    print(line)
                 stream.writeln("")
 
     digits = len(str(test_counts.total()))
