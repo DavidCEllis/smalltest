@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional, TextIO
 from typing import NamedTuple
 from types import TracebackType
+from concurrent.futures import ProcessPoolExecutor
 
 from smalltest.tools import XFailMarker, XPassMarker, SkipMarker
 from smalltest.util import WritelnDecorator
@@ -176,3 +177,73 @@ def run_tests_serial(
     stream.writeln(delimiters)
     stream.flush()
     return results
+
+
+def run_isolated_test(testdetails: tuple[Path, str]) -> tuple[str, TestResult]:
+    module_path = testdetails[0]
+    test_name = testdetails[1]
+
+    stream = sys.stdout
+    stream = WritelnDecorator(stream)
+
+    # Load the test module
+    module_name = module_path.stem
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+
+    test = getattr(module, test_name)
+    result = run_test(test)
+
+    full_test_name = f"{module_name}::{test_name}"
+
+    match result.result_type:
+        case ResultType.SUCCESS:
+            stream.writeln(f"{full_test_name} - Success")
+        case ResultType.FAILURE:
+            stream.writeln(f"{full_test_name} - Failure")
+        case ResultType.XFAIL:
+            stream.writeln(f"{full_test_name} - XFailed")
+        case ResultType.XPASS:
+            stream.writeln(f"{full_test_name} - XPassed")
+        case ResultType.SKIP:
+            stream.writeln(f"{full_test_name} - Skipped / "
+                           f"{result.exception.args[0]}")
+        case ResultType.ERROR:
+            stream.writeln(f"{full_test_name} - ERROR")
+
+    return full_test_name, result
+
+
+def run_tests_parallel(
+        test_dict: dict[Path, list[str]],
+        stream: Optional[TextIO] = None,
+        processes: Optional[int] = None,
+        timeout: Optional[int] = None,
+) -> dict[str, TestResult]:
+    stream = stream if stream else sys.stdout
+    stream = WritelnDecorator(stream)
+
+    test_total = sum(len(tests) for tests in test_dict.values())
+
+    top_banner = (f"Smalltest: running {test_total} tests in parallel "
+                  f"from {len(test_dict)} modules")
+
+    delimiters = "=" * len(top_banner)
+
+    stream.writeln(delimiters)
+    stream.writeln(top_banner)
+    stream.writeln(delimiters)
+
+    test_params = [
+        (pth, test_name) for pth in test_dict.keys() for test_name in test_dict[pth]
+    ]
+
+    with ProcessPoolExecutor(max_workers=processes) as pool:
+        results = pool.map(run_isolated_test, test_params, timeout=timeout)
+
+    sys.stdout.flush()
+    stream.writeln(delimiters)
+
+    return dict(results)

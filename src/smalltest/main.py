@@ -13,6 +13,7 @@ from typing import TextIO, Optional, Union
 from smalltest.suite import (
     discover_tests,
     run_tests_serial,
+    run_tests_parallel,
     text_reporter,
     ResultType
 )
@@ -52,13 +53,15 @@ def coverage_if_available(omit: list[str]):
 def discover_run_report(
         base_path: Optional[Union[str, Path]] = None,
         strict_xfail: bool = False,
-        stream: TextIO = sys.stdout
+        stream: TextIO = sys.stdout,
+        runner=run_tests_serial,
 ) -> ExitCode:
     """
     Discover tests, run the tests, print a report to stream output
     :param base_path:
     :param strict_xfail: fail if tests xpass
     :param stream: file-like text stream
+    :param runner: Test runner
     :return Exitcode:
     """
     # Discover Tests
@@ -75,9 +78,17 @@ def discover_run_report(
     omit = list(str(module) for module in tests.keys())
 
     # Setup Coverage Before Import
-    with coverage_if_available(omit) as cov_output:
+    if runner is run_tests_serial:
+        with coverage_if_available(omit) as cov_output:
+            try:
+                test_results = runner(tests, stream=stream)
+            except Exception as e:
+                traceback.print_exception(e)
+                return ExitCode.ERROR_RUN
+    else:
+        cov_output = None
         try:
-            test_results = run_tests_serial(tests, stream=stream)
+            test_results = runner(tests, stream=stream)
         except Exception as e:
             traceback.print_exception(e)
             return ExitCode.ERROR_RUN
@@ -111,6 +122,13 @@ def main():
     # Include the current directory as first in sys.path
     sys.path.insert(0, str(Path.cwd()))
     result = discover_run_report()
+    sys.exit(result.value)
+
+
+def parallel_main():
+    # Include the current directory as first in sys.path
+    sys.path.insert(0, str(Path.cwd()))
+    result = discover_run_report(runner=run_tests_parallel)
     sys.exit(result.value)
 
 

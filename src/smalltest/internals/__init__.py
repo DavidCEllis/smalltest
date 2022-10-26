@@ -1,0 +1,1 @@
+from rewrite_assert_statements import rewrite_assert
