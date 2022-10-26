@@ -13,7 +13,6 @@ from typing import TextIO, Optional, Union
 from smalltest.suite import (
     discover_tests,
     run_tests_serial,
-    run_tests_parallel,
     text_reporter,
     ResultType
 )
@@ -122,13 +121,6 @@ def main():
     # Include the current directory as first in sys.path
     sys.path.insert(0, str(Path.cwd()))
     result = discover_run_report()
-    sys.exit(result.value)
-
-
-def parallel_main():
-    # Include the current directory as first in sys.path
-    sys.path.insert(0, str(Path.cwd()))
-    result = discover_run_report(runner=run_tests_parallel)
     sys.exit(result.value)
 
 
