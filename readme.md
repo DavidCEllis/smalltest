@@ -4,15 +4,15 @@ Simple unittests, no additional required dependencies.
 
 Smalltest until/unless I come up with a better name.
 
-This is still in the very early exploration stages.
+**This is still in the very early exploration stages and is mostly a learning project**
 
-Written mostly as a learning project, but also after finding out that another
-project I was working on was still dependent on attrs in the development
-environment due to the use of pytest.
+## Motivation ##
+I was attempting to remove attrs as a dependency of splitguides and found that despite
+doing so it would still end up in my working/testing environment because it was a 
+dependency of pytest. I actually found there were a couple of extra usages of attrs
+that hadn't been immediately caught because pytest was always in the environment used 
+for development.
 
-The core features this intends to support are:
-   1. Writing tests as plain `test_this` named functions without the need for `unittest.TestCase`
-      classes. 🗹
-   2. Getting useful information from plain `assert` statements to remove the need for 
-      assertXYZ style functions. ☐
-   3. Some basic decorators to provide xfail/skipif/parametrized tests. 🗹🗹☐
+I really don't like writing unittest format tests but didn't want the extra dependencies
+required by pytest, so I put together this barebones testing package in order to write
+plain `test_*` functions.
